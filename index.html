@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>STEADY 지원하기</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.css" />
+    <script src="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.js"></script>
+    <style>
+        @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css');
+        body {
+            font-family: 'Pretendard', sans-serif;
+            background-color: #f8fafc;
+            color: #1e293b;
+            scroll-behavior: smooth;
+        }
+        .swiper {
+            width: 100%;
+            max-width: 600px;
+            height: auto;
+            aspect-ratio: 1 / 1;
+            border-radius: 16px;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        }
+        .swiper-slide img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .question-block {
+            min-height: 85vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.7s cubic-bezier(0.4, 0, 0.2, 1);
+            padding: 40px 0;
+        }
+        .question-block.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        .question-block.past {
+            opacity: 0.3;
+            pointer-events: none;
+        }
+        /* Custom radio/checkbox styles */
+        .option-label {
+            display: block;
+            padding: 16px 20px;
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.2s;
+            margin-bottom: 12px;
+            background: white;
+            font-size: 1.125rem;
+            color: #475569;
+        }
+        .option-label:hover {
+            border-color: #3b82f6;
+            background-color: #f0fdf4; /* Very light subtle hover */
+        }
+        input[type="radio"]:checked + .option-label,
+        input[type="checkbox"]:checked + .option-label {
+            border-color: #2563eb;
+            background-color: #eff6ff;
+            color: #1d4ed8;
+            font-weight: 700;
+            box-shadow: 0 4px 6px -1px rgba(59, 130, 246, 0.1);
+        }
+        input[type="radio"], input[type="checkbox"] {
+            display: none;
+        }
+        .input-text {
+            width: 100%;
+            padding: 16px 20px;
+            font-size: 1.25rem;
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            background: white;
+            transition: all 0.3s;
+            outline: none;
+            color: #0f172a;
+        }
+        .input-text:focus {
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.15);
+            transform: translateY(-2px);
+        }
+        .input-text::placeholder {
+            color: #94a3b8;
+        }
+        
+        .next-btn {
+            background-color: #2563eb;
+            color: white;
+            padding: 14px 36px;
+            border-radius: 30px;
+            font-size: 1.25rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            margin-top: 28px;
+            box-shadow: 0 4px 6px -1px rgba(37, 99, 235, 0.2);
+        }
+        .next-btn:hover {
+            background-color: #1d4ed8;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 10px -1px rgba(37, 99, 235, 0.3);
+        }
+        .next-btn:active {
+            transform: translateY(0);
+        }
+    </style>
+</head>
+<body class="antialiased">
+
+    <!-- Intro Section -->
+    <div id="intro-section" class="min-h-screen flex flex-col items-center justify-center p-6 transition-all duration-700">
+        
+        <div class="w-full max-w-2xl mx-auto text-center mb-8">
+            <h1 class="text-4xl md:text-5xl font-extrabold text-blue-600 mb-4 tracking-tight">STEADY 2026</h1>
+            <p class="text-xl text-slate-600 font-medium">서울 대학생 연합 스터디 그룹 지원하기</p>
+        </div>
+
+        <!-- Slider main container -->
+        <div class="swiper mb-12">
+            <div class="swiper-wrapper">
+                <div class="swiper-slide"><img src="assets/media_1787926879556.jpg" alt="STEADY 1"></div>
+                <div class="swiper-slide"><img src="assets/media_1787926880539.jpg" alt="STEADY 2"></div>
+                <div class="swiper-slide"><img src="assets/media_1787926881567.jpg" alt="STEADY 3"></div>
+                <div class="swiper-slide"><img src="assets/media_1787926882972.jpg" alt="STEADY 4"></div>
+                <div class="swiper-slide"><img src="assets/media_1787926884364.jpg" alt="STEADY 5"></div>
+            </div>
+            <div class="swiper-pagination"></div>
+            <div class="swiper-button-prev"></div>
+            <div class="swiper-button-next"></div>
+        </div>
+
+        <button id="start-btn" class="w-full max-w-md bg-blue-600 hover:bg-blue-700 text-white font-bold py-5 px-8 rounded-2xl text-2xl shadow-xl hover:shadow-2xl transition-all transform hover:-translate-y-2 flex justify-center items-center gap-2">
+            지원하기 <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+        </button>
+    </div>
+
+    <!-- Form Section -->
+    <div id="form-section" class="hidden max-w-3xl mx-auto px-6 pb-32">
+        <form id="steady-form" onsubmit="event.preventDefault(); alert('지원이 완료되었습니다!'); window.location.reload();">
+            
+            <!-- Question 1 -->
+            <div class="question-block" id="q1">
+                <p class="text-blue-500 font-bold mb-3 tracking-wider text-sm">1 / 15</p>
+                <h2 class="text-3xl md:text-4xl font-bold mb-8 leading-tight">이름을 알려주세요!</h2>
+                <input type="text" class="input-text" placeholder="홍길동" required>
+                <div>
+                    <button type="button" class="next-btn" onclick="nextQuestion(1)">확인 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg></button>
+                </div>
+            </div>
+
+            <!-- Question 2 -->
+            <div class="question-block hidden-q" id="q2">
+                <p class="text-blue-500 font-bold mb-3 tracking-wider text-sm">2 / 15</p>
+                <h2 class="text-3xl md:text-4xl font-bold mb-8 leading-tight">나이를 알려주세요!</h2>
+                <input type="number" class="input-text" placeholder="23" required>
+                <div>
+                    <button type="button" class="next-btn" onclick="nextQuestion(2)">확인 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg></button>
+                </div>
+            </div>
+
+            <!-- Question 3 -->
+            <div class="question-block hidden-q" id="q3">
+                <p class="text-blue-500 font-bold mb-3 tracking-wider text-sm">3 / 15</p>
+                <h2 class="text-3xl md:text-4xl font-bold mb-3 leading-tight">학교 / 학과 / 학년을 알려주세요!</h2>
+                <p class="text-slate-500 mb-8 text-lg">예) OO대학교 / 경영학과 / 2학년</p>
+                <input type="text" class="input-text" placeholder="입력해주세요" required>
+                <div>
+                    <button type="button" class="next-btn" onclick="nextQuestion(3)">확인 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg></button>
+                </div>
+            </div>
+
+            <!-- Question 4 -->
+            <div class="question-block hidden-q" id="q4">
+                <p class="text-blue-500 font-bold mb-3 tracking-wider text-sm">4 / 15</p>
+                <h2 class="text-3xl md:text-4xl font-bold mb-8 leading-tight">현재 재학 상태를 알려주세요.</h2>
+                <div class="space-y-3">
+                    <label><input type="radio" name="status" value="재학생" onchange="autoNext(4)"><span class="option-label">재학생</span></label>
+                    <label><input type="radio" name="status" value="휴학생" onchange="autoNext(4)"><span class="option-label">휴학생</span></label>
+                    <label><input type="radio" name="status" value="기타" onchange="autoNext(4)"><span class="option-label">기타</span></label>
+                </div>
+            </div>
+
+            <!-- Question 5 -->
+            <div class="question-block hidden-q" id="q5">
+                <p class="text-blue-500 font-bold mb-3 tracking-wider text-sm">5 / 15</p>
+                <h2 class="text-3xl md:text-4xl font-bold mb-3 leading-tight">연락 가능한 전화번호를 남겨주세요.</h2>
+                <p class="text-slate-500 mb-8 text-lg">합격 안내를 위해 사용됩니다.</p>
+                <input type="tel" class="input-text" placeholder="010-1234-5678" required>
+                <div>
+                    <button type="button" class="next-btn" onclick="nextQuestion(5)">확인 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg></button>
+                </div>
+            </div>
+
+            <!-- Question 6 -->
+            <div class="question-block hidden-q" id="q6">
+                <p class="text-blue-500 font-bold mb-3 tracking-wider text-sm">6 / 15</p>
+                <h2 class="text-3xl md:text-4xl font-bold mb-8 leading-tight">어떤 GROUP에 참여하고 싶나요?</h2>
+                <div class="space-y-3">
+                    <label><input type="radio" name="group" value="학업" onchange="autoNext(6)"><span class="option-label">GROUP 1️⃣ 학업</span></label>
+                    <label><input type="radio" name="group" value="취업/직무" onchange="autoNext(6)"><span class="option-label">GROUP 2️⃣ 취업/직무</span></label>
+                    <label><input type="radio" name="group" value="자기계발" onchange="autoNext(6)"><span class="option-label">GROUP 3️⃣ 자기계발</span></label>
+                    <label><input type="radio" name="group" value="고민중" onchange="autoNext(6)"><span class="option-label">아직 고민 중이에요!</span></label>
+                </div>
+            </div>
+
+            <!-- Question 7 -->
+            <div class="question-block hidden-q" id="q7">
+                <p class="text-blue-500 font-bold mb-3 tracking-wider text-sm">7 / 15</p>
+                <h2 class="text-3xl md:text-4xl font-bold mb-3 leading-tight">이번 학기에 꾸준히 해보고 싶은 목표가 무엇인가요? 🎯</h2>
+                <p class="text-slate-500 mb-8 text-lg">예) 토익 850점 / 컴활 1급 / 전공 성적 올리기 / 포트폴리오 완성 / 한 달에 책 2권 등</p>
+                <textarea class="input-text" rows="4" placeholder="목표를 자유롭게 적어주세요!" required></textarea>
+                <div>
+                    <button type="button" class="next-btn" onclick="nextQuestion(7)">확인 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg></button>
+                </div>
+            </div>
+
+            <!-- Question 8 -->
+            <div class="question-block hidden-q" id="q8">
+                <p class="text-blue-500 font-bold mb-3 tracking-wider text-sm">8 / 15</p>
+                <h2 class="text-3xl md:text-4xl font-bold mb-3 leading-tight">구체적으로 어떤 스터디를 하고 싶은지 알려주세요! 📚</h2>
+                <p class="text-slate-500 mb-8 text-lg">그룹 편성에 가장 중요하게 활용되는 질문입니다.<br>예) 토익 문제풀이 / 영어회화 / 컴활 / 독서 / 코딩 / 전공 시험 대비 등</p>
+                <textarea class="input-text" rows="4" placeholder="희망하는 스터디 내용을 적어주세요." required></textarea>
+                <div>
+                    <button type="button" class="next-btn" onclick="nextQuestion(8)">확인 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg></button>
+                </div>
+            </div>
+
+            <!-- Question 9 -->
+            <div class="question-block hidden-q" id="q9">
+                <p class="text-blue-500 font-bold mb-3 tracking-wider text-sm">9 / 15</p>
+                <h2 class="text-3xl md:text-4xl font-bold mb-3 leading-tight">스테디에서 3개월 뒤 꼭 하나 이루고 싶은 게 있다면? ✨</h2>
+                <p class="text-slate-500 mb-8 text-lg">크고 거창한 목표가 아니어도 좋아요!</p>
+                <textarea class="input-text" rows="3" placeholder="이루고 싶은 목표를 적어주세요." required></textarea>
+                <div>
+                    <button type="button" class="next-btn" onclick="nextQuestion(9)">확인 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg></button>
+                </div>
+            </div>
+
+            <!-- Question 10 -->
+            <div class="question-block hidden-q" id="q10">
+                <p class="text-blue-500 font-bold mb-3 tracking-wider text-sm">10 / 15</p>
+                <h2 class="text-3xl md:text-4xl font-bold mb-8 leading-tight">주 1회 스터디 참여가 가능한가요?</h2>
+                <div class="space-y-3">
+                    <label><input type="radio" name="participation" value="네" onchange="autoNext(10)"><span class="option-label">네!</span></label>
+                    <label><input type="radio" name="participation" value="일정조율" onchange="autoNext(10)"><span class="option-label">일정 조율이 필요해요.</span></label>
+                    <label><input type="radio" name="participation" value="기타" onchange="autoNext(10)"><span class="option-label">기타</span></label>
+                </div>
+            </div>
+
+            <!-- Question 11 -->
+            <div class="question-block hidden-q" id="q11">
+                <p class="text-blue-500 font-bold mb-3 tracking-wider text-sm">11 / 15</p>
+                <h2 class="text-3xl md:text-4xl font-bold mb-8 leading-tight">선호하는 활동 방식을 알려주세요.</h2>
+                <div class="space-y-3">
+                    <label><input type="radio" name="mode" value="오프라인" onchange="autoNext(11)"><span class="option-label">오프라인</span></label>
+                    <label><input type="radio" name="mode" value="온라인" onchange="autoNext(11)"><span class="option-label">온라인</span></label>
+                    <label><input type="radio" name="mode" value="모두" onchange="autoNext(11)"><span class="option-label">온·오프라인 모두 가능</span></label>
+                </div>
+            </div>
+
+            <!-- Question 12 -->
+            <div class="question-block hidden-q" id="q12">
+                <p class="text-blue-500 font-bold mb-3 tracking-wider text-sm">12 / 15</p>
+                <h2 class="text-3xl md:text-4xl font-bold mb-3 leading-tight">주로 활동 가능한 요일/시간대를 알려주세요.</h2>
+                <p class="text-slate-500 mb-8 text-lg">복수 선택 가능</p>
+                <div class="grid grid-cols-2 gap-4">
+                    <label><input type="checkbox" name="time" value="평일 오전"><span class="option-label text-center">평일 오전</span></label>
+                    <label><input type="checkbox" name="time" value="평일 오후"><span class="option-label text-center">평일 오후</span></label>
+                    <label><input type="checkbox" name="time" value="평일 저녁"><span class="option-label text-center">평일 저녁</span></label>
+                    <label><input type="checkbox" name="time" value="주말 오전"><span class="option-label text-center">주말 오전</span></label>
+                    <label><input type="checkbox" name="time" value="주말 오후"><span class="option-label text-center">주말 오후</span></label>
+                    <label><input type="checkbox" name="time" value="주말 저녁"><span class="option-label text-center">주말 저녁</span></label>
+                </div>
+                <div>
+                    <button type="button" class="next-btn" onclick="nextQuestion(12)">확인 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg></button>
+                </div>
+            </div>
+
+            <!-- Question 13 -->
+            <div class="question-block hidden-q" id="q13">
+                <p class="text-blue-500 font-bold mb-3 tracking-wider text-sm">13 / 15</p>
+                <h2 class="text-3xl md:text-4xl font-bold mb-3 leading-tight">주로 활동하기 편한 지역을 알려주세요. 📍</h2>
+                <p class="text-slate-500 mb-8 text-lg">예) 신촌/홍대 / 건대/성수 / 강남 / 서울 전 지역 가능</p>
+                <input type="text" class="input-text" placeholder="활동 가능 지역" required>
+                <div>
+                    <button type="button" class="next-btn" onclick="nextQuestion(13)">확인 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg></button>
+                </div>
+            </div>
+
+            <!-- Question 14 -->
+            <div class="question-block hidden-q" id="q14">
+                <p class="text-blue-500 font-bold mb-3 tracking-wider text-sm">14 / 15</p>
+                <h2 class="text-3xl md:text-4xl font-bold mb-3 leading-tight">마지막으로 스테디에 지원하게 된 이유를 편하게 적어주세요! 😊</h2>
+                <p class="text-slate-500 mb-8 text-lg">스테디에서 기대하는 점이 있다면 함께 적어주세요.</p>
+                <textarea class="input-text" rows="5" placeholder="자유롭게 작성해주세요." required></textarea>
+                <div>
+                    <button type="button" class="next-btn" onclick="nextQuestion(14)">확인 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg></button>
+                </div>
+            </div>
+
+            <!-- Question 15 -->
+            <div class="question-block hidden-q" id="q15">
+                <p class="text-blue-500 font-bold mb-3 tracking-wider text-sm">15 / 15</p>
+                <h2 class="text-3xl md:text-4xl font-bold mb-6 leading-tight">지원 전 확인해주세요. ☑️</h2>
+                <div class="bg-blue-50/50 p-6 rounded-2xl mb-8 text-slate-700 leading-relaxed border border-blue-100 text-lg">
+                    스테디는 학업·취업·자기계발을 위한 대학생 자치 스터디이며, 정치·종교·특정 단체·이성 만남 등을 목적으로 한 활동은 제한됩니다.<br><br>그룹별 주 1회 이상 활동을 기본으로 하며, 모임 중 발생하는 개인 비용은 각자 부담합니다.
+                </div>
+                
+                <label class="flex items-center gap-4 p-5 border-2 border-slate-200 rounded-xl cursor-pointer hover:bg-slate-50 transition-colors">
+                    <input type="checkbox" required class="w-7 h-7 rounded border-slate-300 text-blue-600 focus:ring-blue-500">
+                    <span class="text-xl font-bold text-slate-800">위 내용을 모두 확인했습니다.</span>
+                </label>
+                
+                <div class="mt-16 text-center">
+                    <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white font-extrabold py-6 px-16 rounded-full text-2xl shadow-xl hover:shadow-2xl transition-all transform hover:-translate-y-2 w-full md:w-auto">
+                        스테디 지원하기 🎉
+                    </button>
+                </div>
+            </div>
+
+        </form>
+    </div>
+
+    <script>
+        const swiper = new Swiper('.swiper', {
+            loop: true,
+            pagination: { el: '.swiper-pagination', clickable: true },
+            navigation: { nextEl: '.swiper-button-next', prevEl: '.swiper-button-prev' },
+            autoplay: { delay: 3500, disableOnInteraction: false },
+            effect: 'fade',
+            fadeEffect: { crossFade: true }
+        });
+
+        document.getElementById('start-btn').addEventListener('click', () => {
+            const intro = document.getElementById('intro-section');
+            const form = document.getElementById('form-section');
+            
+            intro.style.opacity = '0';
+            intro.style.transform = 'translateY(-50px)';
+            
+            setTimeout(() => {
+                intro.style.display = 'none';
+                form.classList.remove('hidden');
+                
+                const q1 = document.getElementById('q1');
+                q1.style.display = 'flex';
+                void q1.offsetWidth;
+                q1.classList.add('active');
+                
+                setTimeout(() => q1.querySelector('input').focus(), 300);
+            }, 600);
+        });
+
+        function nextQuestion(currentNum) {
+            const currentQ = document.getElementById(`q${currentNum}`);
+            const nextQ = document.getElementById(`q${currentNum + 1}`);
+            
+            if (nextQ) {
+                nextQ.style.display = 'flex';
+                currentQ.classList.add('past'); // Dim previous question
+                
+                setTimeout(() => {
+                    nextQ.classList.add('active');
+                    nextQ.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    
+                    const input = nextQ.querySelector('input:not([type="radio"]):not([type="checkbox"]), textarea');
+                    if(input) setTimeout(() => input.focus(), 600);
+                }, 50);
+            }
+        }
+
+        function autoNext(currentNum) {
+            setTimeout(() => nextQuestion(currentNum), 400);
+        }
+
+        document.querySelectorAll('.hidden-q').forEach(el => el.style.display = 'none');
+    </script>
+</body>
+</html>
