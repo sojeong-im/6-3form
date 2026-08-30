@@ -404,7 +404,7 @@
                 </div>
                 
                 <label class="flex items-center gap-3 p-5 border-2 border-slate-200 rounded-2xl cursor-pointer hover:bg-slate-50">
-                    <input type="checkbox" name="agreement" required class="w-6 h-6 rounded text-blue-600">
+                    <input type="checkbox" name="agreement" required class="w-6 h-6 rounded text-blue-600" style="display: block;">
                     <span class="text-lg font-bold text-slate-800">위 내용을 확인했습니다.</span>
                 </label>
                 
@@ -447,15 +447,28 @@
 
         function nextQ(currentNum) {
             const currentQ = document.getElementById(`q${currentNum}`);
-            const nextQ = document.getElementById(`q${currentNum + 1}`);
             
-            if (nextQ) {
+            // 현재 질문의 필수 항목 유효성 검사
+            const inputs = currentQ.querySelectorAll('input, textarea');
+            let isValid = true;
+            for(let input of inputs) {
+                if(!input.checkValidity()) {
+                    input.reportValidity();
+                    isValid = false;
+                    break;
+                }
+            }
+            if(!isValid) return;
+
+            const nextQElem = document.getElementById(`q${currentNum + 1}`);
+            
+            if (nextQElem) {
                 currentQ.classList.remove('active');
                 currentQ.classList.add('exit-up');
                 
                 setTimeout(() => {
-                    nextQ.classList.add('active');
-                    const input = nextQ.querySelector('input:not([type="radio"]):not([type="checkbox"]), textarea');
+                    nextQElem.classList.add('active');
+                    const input = nextQElem.querySelector('input:not([type="radio"]):not([type="checkbox"]), textarea');
                     if(input) setTimeout(() => input.focus(), 400);
                 }, 300);
             }
