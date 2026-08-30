@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>STEADY 관리자 페이지</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css');
+        body { font-family: 'Pretendard', sans-serif; background-color: #f8fafc; }
+    </style>
+</head>
+<body class="text-slate-800">
+
+    <!-- Login Screen -->
+    <div id="login-screen" class="min-h-screen flex items-center justify-center p-4">
+        <div class="bg-white p-8 rounded-2xl shadow-lg w-full max-w-sm">
+            <h1 class="text-2xl font-bold mb-6 text-center text-blue-700">관리자 로그인</h1>
+            <input type="password" id="password-input" placeholder="비밀번호 입력" class="w-full px-4 py-3 rounded-lg border-2 border-slate-200 focus:border-blue-500 focus:outline-none mb-4" onkeypress="if(event.key === 'Enter') checkPassword()">
+            <button onclick="checkPassword()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded-lg transition-colors">접속하기</button>
+            <p id="error-msg" class="text-red-500 text-sm mt-3 text-center hidden">비밀번호가 틀렸습니다.</p>
+        </div>
+    </div>
+
+    <!-- Admin Dashboard -->
+    <div id="dashboard-screen" class="hidden min-h-screen p-6 md:p-12">
+        <div class="max-w-7xl mx-auto">
+            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-end mb-8 gap-4">
+                <div>
+                    <h1 class="text-3xl font-black text-blue-700 tracking-tight">STEADY 지원자 관리</h1>
+                    <p class="text-slate-500 mt-2">총 지원자: <span id="total-count" class="font-bold text-blue-600">0</span>명</p>
+                </div>
+                <button onclick="fetchData()" class="bg-slate-200 hover:bg-slate-300 text-slate-700 px-4 py-2 rounded-lg font-semibold transition-colors flex items-center gap-2">
+                    새로고침 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>
+                </button>
+            </div>
+
+            <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left border-collapse">
+                        <thead>
+                            <tr class="bg-slate-50 border-b border-slate-200 text-slate-500 text-sm">
+                                <th class="p-4 font-semibold whitespace-nowrap">제출일시</th>
+                                <th class="p-4 font-semibold whitespace-nowrap">이름(나이)</th>
+                                <th class="p-4 font-semibold whitespace-nowrap">연락처</th>
+                                <th class="p-4 font-semibold whitespace-nowrap">학교/전공</th>
+                                <th class="p-4 font-semibold whitespace-nowrap">희망그룹</th>
+                                <th class="p-4 font-semibold whitespace-nowrap">지원동기 (요약)</th>
+                            </tr>
+                        </thead>
+                        <tbody id="table-body" class="divide-y divide-slate-100 text-sm">
+                            <!-- Data rows will go here -->
+                        </tbody>
+                    </table>
+                </div>
+                <div id="loading" class="p-8 text-center text-slate-400">데이터를 불러오는 중입니다...</div>
+            </div>
+            
+            <!-- Modal for details -->
+            <div id="detail-modal" class="fixed inset-0 bg-black bg-opacity-50 hidden flex items-center justify-center z-50 p-4">
+                <div class="bg-white rounded-2xl w-full max-w-2xl max-h-[90vh] flex flex-col shadow-2xl">
+                    <div class="flex justify-between items-center p-6 border-b border-slate-100">
+                        <h2 class="text-xl font-bold text-slate-800">상세 지원서</h2>
+                        <button onclick="closeModal()" class="text-slate-400 hover:text-slate-600 text-3xl leading-none">&times;</button>
+                    </div>
+                    <div id="modal-content" class="p-6 overflow-y-auto space-y-6">
+                        <!-- Detail content -->
+                    </div>
+                </div>
+            </div>
+            
+        </div>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getFirestore, collection, getDocs, query, orderBy } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+        // 기존 폼과 동일한 파이어베이스 설정
+        const firebaseConfig = {
+            apiKey: "AIzaSyCH1KkimKGN2NImlVHtmmXzO2p6OKkLznk",
+            authDomain: "steady-54e01.firebaseapp.com",
+            projectId: "steady-54e01",
+            storageBucket: "steady-54e01.firebasestorage.app",
+            messagingSenderId: "290851972856",
+            appId: "1:290851972856:web:95e1080c57ef8219e77d0d"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        let applicationsData = [];
+
+        window.checkPassword = function() {
+            const input = document.getElementById('password-input').value;
+            if (input === '00347') {
+                document.getElementById('login-screen').classList.add('hidden');
+                document.getElementById('dashboard-screen').classList.remove('hidden');
+                fetchData();
+            } else {
+                document.getElementById('error-msg').classList.remove('hidden');
+            }
+        }
+
+        window.fetchData = async function() {
+            const tbody = document.getElementById('table-body');
+            const loading = document.getElementById('loading');
+            const totalCount = document.getElementById('total-count');
+            
+            tbody.innerHTML = '';
+            loading.classList.remove('hidden');
+            loading.innerText = '데이터를 불러오는 중입니다...';
+
+            try {
+                // 최신순 정렬 (timestamp가 필요하므로 폼 제출 시 timestamp 필드가 저장되어야 함)
+                const q = query(collection(db, "applications"), orderBy("timestamp", "desc"));
+                const querySnapshot = await getDocs(q);
+                
+                applicationsData = [];
+                querySnapshot.forEach((doc) => {
+                    applicationsData.push({ id: doc.id, ...doc.data() });
+                });
+
+                totalCount.innerText = applicationsData.length;
+                
+                if (applicationsData.length === 0) {
+                    loading.innerText = '아직 제출된 지원서가 없습니다.';
+                    return;
+                }
+
+                loading.classList.add('hidden');
+
+                applicationsData.forEach((data, index) => {
+                    const dateObj = data.timestamp ? data.timestamp.toDate() : new Date();
+                    const dateStr = `${dateObj.getMonth()+1}/${dateObj.getDate()} ${dateObj.getHours()}:${String(dateObj.getMinutes()).padStart(2, '0')}`;
+                    
+                    // 사유 텍스트 말줄임
+                    const reasonSnippet = data.reason ? (data.reason.length > 25 ? data.reason.substring(0, 25) + '...' : data.reason) : '-';
+
+                    const tr = document.createElement('tr');
+                    tr.className = "hover:bg-slate-50 cursor-pointer transition-colors";
+                    tr.onclick = () => openModal(index);
+                    
+                    tr.innerHTML = `
+                        <td class="p-4 text-slate-500">${dateStr}</td>
+                        <td class="p-4 font-bold">${data.name || '-'} <span class="text-slate-400 font-normal">(${data.age || '-'})</span></td>
+                        <td class="p-4">${data.phone || '-'}</td>
+                        <td class="p-4">${data.major || '-'}</td>
+                        <td class="p-4"><span class="bg-blue-100 text-blue-700 px-2 py-1 rounded-md text-xs font-bold">${data.group || '-'}</span></td>
+                        <td class="p-4 text-slate-500">${reasonSnippet}</td>
+                    `;
+                    tbody.appendChild(tr);
+                });
+
+            } catch (error) {
+                console.error("Error fetching documents: ", error);
+                // 인덱스 오류 등의 경우 대비 안내
+                if(error.message.includes("index")) {
+                    loading.innerHTML = 'Firestore 색인(Index) 설정이 필요합니다. 콘솔의 에러 메시지에 포함된 URL을 클릭하여 색인을 생성해주세요.';
+                } else {
+                    loading.innerText = '데이터를 불러오는 중 오류가 발생했습니다. 권한 설정을 확인해주세요.';
+                }
+            }
+        }
+
+        window.openModal = function(index) {
+            const data = applicationsData[index];
+            const modal = document.getElementById('detail-modal');
+            const content = document.getElementById('modal-content');
+            
+            const dateObj = data.timestamp ? data.timestamp.toDate() : new Date();
+            const dateStr = `${dateObj.getFullYear()}년 ${dateObj.getMonth()+1}월 ${dateObj.getDate()}일 ${dateObj.getHours()}:${String(dateObj.getMinutes()).padStart(2, '0')}`;
+
+            // 배열/문자열 처리 헬퍼
+            const formatTime = (timeData) => {
+                if (!timeData) return '-';
+                if (Array.isArray(timeData)) return timeData.join(', ');
+                return timeData;
+            }
+
+            content.innerHTML = `
+                <div class="grid grid-cols-2 gap-4 bg-slate-50 p-4 rounded-xl">
+                    <div><span class="text-slate-400 text-xs block mb-1">이름</span><div class="font-bold">${data.name || '-'}</div></div>
+                    <div><span class="text-slate-400 text-xs block mb-1">나이</span><div class="font-bold">${data.age || '-'}세</div></div>
+                    <div><span class="text-slate-400 text-xs block mb-1">연락처</span><div class="font-bold">${data.phone || '-'}</div></div>
+                    <div><span class="text-slate-400 text-xs block mb-1">재학상태</span><div class="font-bold">${data.status || '-'}</div></div>
+                    <div class="col-span-2"><span class="text-slate-400 text-xs block mb-1">학교/전공/학년</span><div class="font-bold">${data.major || '-'}</div></div>
+                </div>
+                
+                <div>
+                    <h3 class="font-bold text-blue-600 mb-2 border-b pb-2">지원 정보</h3>
+                    <div class="space-y-4 text-sm mt-3">
+                        <div><span class="text-slate-400 inline-block w-24">희망 그룹</span><span class="font-semibold">${data.group || '-'}</span></div>
+                        <div><span class="text-slate-400 inline-block w-24">활동 방식</span><span class="font-semibold">${data.mode || '-'}</span></div>
+                        <div><span class="text-slate-400 inline-block w-24">가능 요일/시간</span><span class="font-semibold">${formatTime(data.time)}</span></div>
+                        <div><span class="text-slate-400 inline-block w-24">활동 가능 지역</span><span class="font-semibold">${data.region || '-'}</span></div>
+                        <div><span class="text-slate-400 inline-block w-24">주 1회 참여</span><span class="font-semibold">${data.participation || '-'}</span></div>
+                    </div>
+                </div>
+
+                <div>
+                    <h3 class="font-bold text-blue-600 mb-2 border-b pb-2">상세 답변</h3>
+                    <div class="space-y-5 text-sm mt-3">
+                        <div>
+                            <div class="text-slate-500 mb-1 font-semibold">Q. 이번 학기에 꾸준히 해보고 싶은 목표</div>
+                            <div class="bg-slate-50 p-3 rounded-lg leading-relaxed whitespace-pre-wrap">${data.goal || '-'}</div>
+                        </div>
+                        <div>
+                            <div class="text-slate-500 mb-1 font-semibold">Q. 구체적으로 어떤 스터디를 하고 싶은지</div>
+                            <div class="bg-slate-50 p-3 rounded-lg leading-relaxed whitespace-pre-wrap">${data.studyDetail || '-'}</div>
+                        </div>
+                        <div>
+                            <div class="text-slate-500 mb-1 font-semibold">Q. 3개월 뒤 꼭 하나 이루고 싶은 것</div>
+                            <div class="bg-slate-50 p-3 rounded-lg leading-relaxed whitespace-pre-wrap">${data.goal3Month || '-'}</div>
+                        </div>
+                        <div>
+                            <div class="text-slate-500 mb-1 font-semibold">Q. 지원하게 된 이유</div>
+                            <div class="bg-slate-50 p-3 rounded-lg leading-relaxed whitespace-pre-wrap">${data.reason || '-'}</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="text-right text-xs text-slate-400 mt-4">
+                    제출일시: ${dateStr}
+                </div>
+            `;
+            
+            modal.classList.remove('hidden');
+        }
+
+        window.closeModal = function() {
+            document.getElementById('detail-modal').classList.add('hidden');
+        }
+        
+        // 모달 바깥 영역 클릭 시 닫기
+        document.getElementById('detail-modal').addEventListener('click', function(e) {
+            if(e.target === this) {
+                closeModal();
+            }
+        });
+    </script>
+</body>
+</html>
