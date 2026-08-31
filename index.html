@@ -209,9 +209,12 @@
 
             <!-- Widget 3: To-do List -->
             <div class="bg-white border border-slate-200 p-6 rounded-3xl shadow-sm">
-                <h3 class="font-bold text-lg flex items-center gap-2 mb-4">✅ 오늘의 스터디 목표</h3>
+                <div class="flex justify-between items-center mb-4">
+                    <h3 class="font-bold text-lg flex items-center gap-2">✅ 오늘의 스터디 목표</h3>
+                    <input type="password" id="member-code-input" placeholder="회원 코드 입력" class="bg-slate-50 border border-slate-200 rounded-lg px-3 py-1.5 outline-none focus:border-blue-500 focus:bg-white transition text-xs w-28 placeholder-slate-400">
+                </div>
                 <form id="todo-form" class="flex gap-2 mb-4" onsubmit="addTodo(event)">
-                    <input type="text" id="todo-input" class="flex-1 bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 outline-none focus:border-blue-500 focus:bg-white transition text-sm" placeholder="무엇을 공부할까요?">
+                    <input type="text" id="todo-input" class="flex-1 bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 outline-none focus:border-blue-500 focus:bg-white transition text-sm" placeholder="무엇을 공부할까요? (회원 전용)">
                     <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white px-5 rounded-xl font-bold transition">+</button>
                 </form>
                 <ul id="todo-list" class="space-y-2">
@@ -505,8 +508,22 @@
             localStorage.setItem('steady-todos', JSON.stringify(todos));
         }
 
+        const VALID_MEMBER_CODE = "STEADY2026";
+
+        function verifyMemberCode() {
+            const codeInput = document.getElementById('member-code-input').value;
+            if (codeInput === VALID_MEMBER_CODE) {
+                return true;
+            } else {
+                alert('회원 코드가 일치하지 않습니다. (임시 코드: STEADY2026)');
+                return false;
+            }
+        }
+
         function addTodo(e) {
             e.preventDefault();
+            if (!verifyMemberCode()) return;
+            
             const input = document.getElementById('todo-input');
             if (input.value.trim()) {
                 todos.push({ text: input.value.trim(), done: false });
@@ -516,11 +533,16 @@
         }
 
         function toggleTodo(index) {
+            if (!verifyMemberCode()) {
+                renderTodos(); // Undo visual check
+                return;
+            }
             todos[index].done = !todos[index].done;
             renderTodos();
         }
 
         function deleteTodo(index) {
+            if (!verifyMemberCode()) return;
             todos.splice(index, 1);
             renderTodos();
         }
