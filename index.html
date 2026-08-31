@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>STEADY - 서울 대학생 연합 스터디 그룹</title>
+    <title>STEADY - 스터디 허브</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.css" />
     <script src="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.js"></script>
@@ -11,108 +11,28 @@
     <style>
         @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css');
         
-        html {
-            scroll-behavior: smooth;
-        }
-
         body {
             font-family: 'Pretendard', sans-serif;
+            background-color: #f1f5f9;
             color: #1e293b;
             margin: 0;
-            background-color: #ffffff;
+            /* Prevent body scroll when modals are open */
         }
 
-        /* --- Landing Page Styles --- */
-        .hero-bg {
-            background-color: #0b57d0;
-            background-image: radial-gradient(circle at 10% 20%, rgba(255,255,255,0.1) 0%, transparent 40%),
-                              radial-gradient(circle at 90% 80%, rgba(255,255,255,0.15) 0%, transparent 40%);
-            color: white;
-        }
-        
-        section {
-            padding: 100px 24px;
-            max-width: 1080px;
+        /* --- App Container --- */
+        #app-container {
+            max-width: 480px;
             margin: 0 auto;
+            min-height: 100dvh;
+            background-color: #ffffff;
+            box-shadow: 0 0 20px rgba(0,0,0,0.05);
+            position: relative;
         }
 
-        .section-title {
-            font-size: 2.25rem;
-            font-weight: 900;
-            color: #0f172a;
-            margin-bottom: 1rem;
-            text-align: center;
-            letter-spacing: -0.02em;
-        }
-
-        .section-subtitle {
-            text-align: center;
-            color: #64748b;
-            margin-bottom: 4rem;
-            font-size: 1.125rem;
-            font-weight: 500;
-        }
-
-        /* Masonry Gallery */
-        .masonry {
-            column-count: 2;
-            column-gap: 16px;
-        }
-        @media (min-width: 768px) {
-            .masonry { column-count: 3; column-gap: 24px; }
-        }
-        .masonry-item {
-            break-inside: avoid;
-            margin-bottom: 16px;
-            border-radius: 20px;
-            overflow: hidden;
-            box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1);
-        }
-        @media (min-width: 768px) {
-            .masonry-item { margin-bottom: 24px; }
-        }
-        .masonry-item img {
-            width: 100%;
-            height: auto;
-            display: block;
-            transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-        .masonry-item:hover img {
-            transform: scale(1.05);
-        }
-
-        /* Cards & Info blocks */
-        .info-card {
-            background: #f8fafc;
-            border-radius: 24px;
-            padding: 32px;
-            transition: transform 0.3s ease;
-        }
-        .info-card:hover {
-            transform: translateY(-5px);
-            background: #ffffff;
-            box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
-        }
-
-        /* Floating Nav */
-        .nav-bar {
+        /* --- Modals --- */
+        .modal-overlay {
             position: fixed;
-            top: 0; left: 0; right: 0;
-            background: rgba(255, 255, 255, 0.9);
-            backdrop-filter: blur(10px);
-            z-index: 40;
-            border-bottom: 1px solid #e2e8f0;
-            padding: 16px 24px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            transition: transform 0.3s ease;
-        }
-
-        /* Form Modal Styles */
-        #form-modal {
-            position: fixed;
-            top: 0; left: 0; right: 0; bottom: 0;
+            inset: 0;
             background: rgba(15, 23, 42, 0.7);
             backdrop-filter: blur(8px);
             z-index: 100;
@@ -120,11 +40,11 @@
             justify-content: center;
             align-items: center;
         }
-        #form-modal.show {
+        .modal-overlay.show {
             display: flex;
         }
 
-        /* App Card Style for Form */
+        /* Form specific styles */
         .main-container {
             position: relative;
             width: 100%;
@@ -171,7 +91,7 @@
             right: 16px;
             width: 40px;
             height: 40px;
-            background: #f1f5f9;
+            background: rgba(255,255,255,0.2);
             border-radius: 50%;
             display: flex;
             justify-content: center;
@@ -179,276 +99,154 @@
             cursor: pointer;
             z-index: 50;
             font-weight: bold;
-            color: #64748b;
+            color: white;
             transition: all 0.2s;
         }
-        .close-btn:hover { background: #e2e8f0; color: #0f172a; transform: scale(1.05); }
+        .close-btn:hover { background: rgba(255,255,255,0.4); transform: scale(1.05); }
 
         /* Form Inputs */
         .input-text {
-            width: 100%;
-            padding: 18px 20px;
-            font-size: 1.125rem;
-            border: 2px solid #e2e8f0;
-            border-radius: 16px;
-            background: #f8fafc;
-            transition: all 0.3s;
-            outline: none;
-            margin-top: 8px;
+            width: 100%; padding: 18px 20px; font-size: 1.125rem; border: 2px solid #e2e8f0; border-radius: 16px;
+            background: #f8fafc; transition: all 0.3s; outline: none; margin-top: 8px;
         }
-        .input-text:focus {
-            border-color: #0b57d0;
-            background: white;
-            box-shadow: 0 0 0 4px rgba(11, 87, 208, 0.15);
-            transform: translateY(-2px);
-        }
-
+        .input-text:focus { border-color: #0b57d0; background: white; box-shadow: 0 0 0 4px rgba(11, 87, 208, 0.15); transform: translateY(-2px); }
         .option-label {
-            display: flex;
-            align-items: center;
-            padding: 16px 20px;
-            border: 2px solid #e2e8f0;
-            border-radius: 16px;
-            cursor: pointer;
-            transition: all 0.2s;
-            margin-bottom: 12px;
-            background: #f8fafc;
-            font-size: 1.125rem;
-            font-weight: 600;
-            color: #475569;
+            display: flex; align-items: center; padding: 16px 20px; border: 2px solid #e2e8f0; border-radius: 16px;
+            cursor: pointer; transition: all 0.2s; margin-bottom: 12px; background: #f8fafc; font-size: 1.125rem; font-weight: 600; color: #475569;
         }
         .option-label:hover { border-color: #0b57d0; background: white; }
-        input[type="radio"]:checked + .option-label,
-        input[type="checkbox"]:checked + .option-label {
+        input[type="radio"]:checked + .option-label, input[type="checkbox"]:checked + .option-label {
             border-color: #0b57d0; background: #eff6ff; color: #0b57d0; font-weight: 700;
         }
         input[type="radio"], input[type="checkbox"] { display: none; }
 
-        /* Buttons */
         .btn-primary {
-            width: 100%;
-            background-color: #0b57d0;
-            color: white;
-            padding: 18px;
-            border-radius: 100px;
-            font-size: 1.25rem;
-            font-weight: 800;
-            cursor: pointer;
-            transition: all 0.2s;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 8px;
-            margin-top: auto;
-            box-shadow: 0 8px 20px rgba(11, 87, 208, 0.3);
-            border: none;
+            width: 100%; background-color: #0b57d0; color: white; padding: 18px; border-radius: 100px;
+            font-size: 1.25rem; font-weight: 800; cursor: pointer; transition: all 0.2s;
+            display: flex; justify-content: center; align-items: center; gap: 8px; margin-top: auto;
+            box-shadow: 0 8px 20px rgba(11, 87, 208, 0.3); border: none;
         }
         .btn-primary:hover { transform: translateY(-3px); box-shadow: 0 12px 25px rgba(11, 87, 208, 0.4); }
-        
-        .btn-yellow {
-            background-color: #facc15;
-            color: #1e293b;
-            box-shadow: 0 8px 20px rgba(250, 204, 21, 0.4);
-        }
-        .btn-yellow:hover {
-            background-color: #eab308;
-            box-shadow: 0 12px 25px rgba(250, 204, 21, 0.5);
-        }
+        .btn-yellow { background-color: #facc15; color: #1e293b; box-shadow: 0 8px 20px rgba(250, 204, 21, 0.4); }
+        .btn-yellow:hover { background-color: #eab308; box-shadow: 0 12px 25px rgba(250, 204, 21, 0.5); }
+        .progress-bar-container { width: 100%; height: 6px; background: #f1f5f9; border-radius: 3px; margin-bottom: 24px; overflow: hidden; }
+        .progress-bar { height: 100%; background: #0b57d0; width: 0%; transition: width 0.5s ease-out; }
 
-        .btn-outline {
-            background-color: transparent;
-            color: white;
-            border: 2px solid rgba(255,255,255,0.5);
-            text-decoration: none;
+        /* Gallery Swiper */
+        .gallery-swiper {
+            width: 100%;
+            aspect-ratio: 1/1;
         }
-        .btn-outline:hover {
-            background-color: rgba(255,255,255,0.1);
-            border-color: white;
-            transform: translateY(-3px);
-            color: white;
+        .gallery-swiper .swiper-slide {
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
-
-        .progress-bar-container {
-            width: 100%; height: 6px; background: #f1f5f9; border-radius: 3px; margin-bottom: 24px; overflow: hidden;
-        }
-        .progress-bar {
-            height: 100%; background: #0b57d0; width: 0%; transition: width 0.5s ease-out;
+        .gallery-swiper img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 16px;
         }
     </style>
 </head>
 <body>
 
-    <!-- Navigation -->
-    <nav class="nav-bar">
-        <div class="font-black text-2xl text-blue-700 tracking-tighter">STEADY</div>
-        <button onclick="openForm()" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-6 rounded-full transition-colors text-sm shadow-md">
-            지원하기
-        </button>
-    </nav>
-
-    <!-- Hero Section -->
-    <header class="hero-bg min-h-[90vh] flex flex-col justify-center items-center text-center px-4 pt-20 relative overflow-hidden">
-        <!-- Floating Elements -->
-        <div class="absolute opacity-20 text-7xl top-32 left-10 animate-pulse">📚</div>
-        <div class="absolute opacity-20 text-6xl bottom-32 right-10 animate-bounce">💡</div>
-        
-        <span class="bg-yellow-400 text-blue-900 font-bold px-5 py-2 rounded-full text-sm mb-6 inline-block shadow-lg">2026 열심히 달릴 사람!</span>
-        <h1 class="text-6xl md:text-8xl font-black mb-4 tracking-tighter">STEADY</h1>
-        <p class="text-xl md:text-2xl font-medium text-blue-100 mb-12">서울 대학생 연합 스터디 그룹</p>
-        
-        <div class="flex flex-col sm:flex-row gap-4 w-full max-w-md mx-auto relative z-10">
-            <button onclick="openForm()" class="btn-primary btn-yellow !w-full !mt-0 !text-lg">지원하기 ✍️</button>
-            <a href="#photos" class="btn-primary btn-outline !w-full !mt-0 !text-lg text-decoration-none text-center">우리는 이렇게 공부해요</a>
-        </div>
-    </header>
-
-    <!-- 활동사진 Section -->
-    <section id="photos">
-        <h2 class="section-title">활동 사진</h2>
-        <p class="section-subtitle">스테디 멤버들의 열정적인 스터디 현장</p>
-        
-        <div class="masonry">
-            <div class="masonry-item">
-                <img src="assets/media_1788197521888.jpg" alt="활동 사진 1">
-            </div>
-            <div class="masonry-item">
-                <img src="assets/media_1788197525517.jpg" alt="활동 사진 2">
-            </div>
-            <div class="masonry-item">
-                <img src="assets/media_1788197528447.jpg" alt="활동 사진 3">
-            </div>
-            <div class="masonry-item">
-                <img src="assets/media_1788197539784.jpg" alt="활동 사진 4">
-            </div>
-            <div class="masonry-item">
-                <img src="assets/media_1788197557092.jpg" alt="활동 사진 5">
-            </div>
-        </div>
-    </section>
-
-    <!-- STEADY STUDY STYLE -->
-    <section id="style" class="bg-slate-50">
-        <div class="max-w-[1080px] mx-auto px-6">
-            <h2 class="section-title">STEADY STUDY STYLE</h2>
-            <p class="section-subtitle">우리는 이렇게 함께 성장합니다</p>
+    <!-- Main App Container -->
+    <div id="app-container" class="pb-12">
+        <!-- Header & Main Buttons -->
+        <div class="bg-[#0b57d0] text-white p-6 rounded-b-[2rem] shadow-lg relative overflow-hidden">
+            <!-- decorative bg -->
+            <div class="absolute opacity-10 text-8xl -right-4 -bottom-4 rotate-12">📚</div>
             
-            <div class="grid md:grid-cols-3 gap-8">
-                <div class="info-card">
-                    <div class="text-4xl mb-4">🎯</div>
-                    <h3 class="text-xl font-bold mb-3">뚜렷한 목표 의식</h3>
-                    <p class="text-slate-600 leading-relaxed">각자의 목표를 공유하고 응원합니다. 학업, 자격증, 취업 등 다양한 분야에서 서로에게 동기부여가 됩니다.</p>
+            <div class="relative z-10 pt-4">
+                <div class="inline-block bg-yellow-400 text-blue-900 text-xs font-black px-3 py-1 rounded-full mb-3 shadow-sm">
+                    서울 대학생 연합 스터디 그룹
                 </div>
-                <div class="info-card">
-                    <div class="text-4xl mb-4">🤝</div>
-                    <h3 class="text-xl font-bold mb-3">자율과 책임</h3>
-                    <p class="text-slate-600 leading-relaxed">자율적인 분위기 속에서도 규칙을 준수하며, 책임감 있게 스터디에 참여합니다.</p>
-                </div>
-                <div class="info-card">
-                    <div class="text-4xl mb-4">🌱</div>
-                    <h3 class="text-xl font-bold mb-3">함께하는 네트워킹</h3>
-                    <p class="text-slate-600 leading-relaxed">다양한 전공과 학교의 사람들이 모여 새로운 시각을 배우고 소중한 인연을 만들어갑니다.</p>
+                <h1 class="text-4xl font-black tracking-tight mb-6">STEADY</h1>
+                
+                <div class="flex flex-col gap-3">
+                    <button onclick="openForm()" class="w-full bg-yellow-400 hover:bg-yellow-500 text-blue-900 font-bold py-4 px-6 rounded-2xl shadow-md transition transform hover:-translate-y-1 flex items-center justify-between">
+                        <span class="text-lg">지원하기 📝</span>
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+                    </button>
+                    <button onclick="openGallery()" class="w-full bg-white/10 hover:bg-white/20 backdrop-blur-sm border border-white/20 text-white font-bold py-4 px-6 rounded-2xl shadow-md transition transform hover:-translate-y-1 flex items-center justify-between">
+                        <span class="text-lg">우리는 이렇게 공부해요 📸</span>
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+                    </button>
                 </div>
             </div>
         </div>
-    </section>
 
-    <!-- 우리의 공부 루틴 -->
-    <section id="routine">
-        <h2 class="section-title">우리의 공부 루틴</h2>
-        <p class="section-subtitle">스테디의 일주일은 이렇게 흘러갑니다</p>
-        
-        <div class="max-w-3xl mx-auto space-y-8">
-            <div class="flex flex-col md:flex-row gap-6 items-center bg-white border border-slate-100 p-6 rounded-2xl shadow-sm">
-                <div class="bg-blue-100 text-blue-700 font-black text-2xl w-16 h-16 flex items-center justify-center rounded-2xl shrink-0">1</div>
-                <div>
-                    <h4 class="text-xl font-bold mb-2">주간 계획 수립 📝</h4>
-                    <p class="text-slate-600">매주 일요일 저녁, 슬랙에 이번 주 목표와 세부 계획을 공유합니다. 공개 선언 효과로 실행력을 높입니다.</p>
-                </div>
-            </div>
+        <!-- Study Helper Widgets -->
+        <div class="px-6 py-8 space-y-6">
             
-            <div class="flex flex-col md:flex-row gap-6 items-center bg-white border border-slate-100 p-6 rounded-2xl shadow-sm">
-                <div class="bg-blue-100 text-blue-700 font-black text-2xl w-16 h-16 flex items-center justify-center rounded-2xl shrink-0">2</div>
+            <!-- Widget 1: Motivation Quote -->
+            <div class="bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-100 p-5 rounded-2xl flex items-start gap-4 shadow-sm">
+                <div class="text-3xl">💡</div>
                 <div>
-                    <h4 class="text-xl font-bold mb-2">정기 모임 (오프라인/온라인) 👥</h4>
-                    <p class="text-slate-600">주 1회, 조별로 정해진 시간에 모여 함께 공부하거나 진도를 점검합니다. 모르는 것을 질문하고 토론합니다.</p>
+                    <h3 class="font-bold text-blue-900 text-sm mb-1">오늘의 동기부여</h3>
+                    <p id="quote-text" class="text-slate-700 text-sm font-medium leading-snug">로딩 중...</p>
                 </div>
             </div>
 
-            <div class="flex flex-col md:flex-row gap-6 items-center bg-white border border-slate-100 p-6 rounded-2xl shadow-sm">
-                <div class="bg-blue-100 text-blue-700 font-black text-2xl w-16 h-16 flex items-center justify-center rounded-2xl shrink-0">3</div>
-                <div>
-                    <h4 class="text-xl font-bold mb-2">주간 회고 🔄</h4>
-                    <p class="text-slate-600">토요일에는 한 주간의 성취를 돌아보고, 부족했던 점을 피드백하여 다음 주 계획에 반영합니다.</p>
+            <!-- Widget 2: Pomodoro Timer -->
+            <div class="bg-white border border-slate-200 p-6 rounded-3xl shadow-sm">
+                <div class="flex justify-between items-center mb-4">
+                    <h3 class="font-bold text-lg flex items-center gap-2">🍅 집중 타이머</h3>
+                    <div class="bg-red-50 text-red-600 px-3 py-1 rounded-full text-xs font-bold">Pomodoro</div>
                 </div>
+                <div class="text-center bg-slate-50 py-6 rounded-2xl border border-slate-100 mb-4">
+                    <div id="timer-display" class="text-6xl font-black text-slate-800 font-mono tracking-tighter">25:00</div>
+                </div>
+                <div class="flex gap-2">
+                    <button onclick="toggleTimer()" id="timer-btn" class="flex-1 bg-slate-800 hover:bg-slate-900 text-white font-bold py-3 rounded-xl transition">집중 시작</button>
+                    <button onclick="resetTimer()" class="w-16 bg-slate-100 hover:bg-slate-200 text-slate-600 font-bold py-3 rounded-xl transition flex justify-center items-center">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Widget 3: To-do List -->
+            <div class="bg-white border border-slate-200 p-6 rounded-3xl shadow-sm">
+                <h3 class="font-bold text-lg flex items-center gap-2 mb-4">✅ 오늘의 스터디 목표</h3>
+                <form id="todo-form" class="flex gap-2 mb-4" onsubmit="addTodo(event)">
+                    <input type="text" id="todo-input" class="flex-1 bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 outline-none focus:border-blue-500 focus:bg-white transition text-sm" placeholder="무엇을 공부할까요?">
+                    <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white px-5 rounded-xl font-bold transition">+</button>
+                </form>
+                <ul id="todo-list" class="space-y-2">
+                    <!-- Todos go here -->
+                </ul>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Gallery Modal (Swiper) -->
+    <div id="gallery-modal" class="modal-overlay flex-col px-4">
+        <div class="close-btn absolute top-6 right-6 !bg-white/20 !text-white" onclick="closeGallery()">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+        </div>
+        <div class="w-full max-w-md mx-auto">
+            <h2 class="text-white text-2xl font-bold mb-6 text-center">우리는 이렇게 공부해요 📚</h2>
+            <div class="swiper gallery-swiper shadow-2xl rounded-2xl">
+                <div class="swiper-wrapper">
+                    <div class="swiper-slide"><img src="assets/media_1788197521888.jpg" alt="활동 1"></div>
+                    <div class="swiper-slide"><img src="assets/media_1788197525517.jpg" alt="활동 2"></div>
+                    <div class="swiper-slide"><img src="assets/media_1788197528447.jpg" alt="활동 3"></div>
+                    <div class="swiper-slide"><img src="assets/media_1788197539784.jpg" alt="활동 4"></div>
+                    <div class="swiper-slide"><img src="assets/media_1788197557092.jpg" alt="활동 5"></div>
+                </div>
+                <div class="swiper-pagination"></div>
             </div>
         </div>
-    </section>
-
-    <!-- STEADY RULE -->
-    <section id="rule" class="bg-slate-900 text-white py-24 max-w-none">
-        <div class="max-w-[1080px] mx-auto px-6">
-            <h2 class="section-title text-white">STEADY RULE</h2>
-            <p class="section-subtitle text-slate-400">원활한 운영을 위한 3가지 약속</p>
-            
-            <div class="grid md:grid-cols-3 gap-6 text-center">
-                <div class="p-8 border border-slate-700 rounded-3xl bg-slate-800/50">
-                    <div class="text-3xl mb-4">⏰</div>
-                    <h4 class="text-lg font-bold mb-2 text-blue-400">지각 및 결석 패널티</h4>
-                    <p class="text-slate-400 text-sm">무단 지각 및 결석 시 패널티가 부과됩니다. 사전에 조율된 일정 변경만 인정됩니다.</p>
-                </div>
-                <div class="p-8 border border-slate-700 rounded-3xl bg-slate-800/50">
-                    <div class="text-3xl mb-4">💬</div>
-                    <h4 class="text-lg font-bold mb-2 text-blue-400">적극적인 소통</h4>
-                    <p class="text-slate-400 text-sm">진행 상황 공유와 피드백에 적극적으로 참여합니다. 침묵보다는 활발한 의견 교환을 지향합니다.</p>
-                </div>
-                <div class="p-8 border border-slate-700 rounded-3xl bg-slate-800/50">
-                    <div class="text-3xl mb-4">🛡️</div>
-                    <h4 class="text-lg font-bold mb-2 text-blue-400">매너와 존중</h4>
-                    <p class="text-slate-400 text-sm">서로의 목표와 공부 방식을 존중하며, 스터디 본연의 목적에 어긋나는 행동은 금지합니다.</p>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- 이번 주 STEADY -->
-    <section id="this-week">
-        <h2 class="section-title">이번 주 STEADY</h2>
-        <p class="section-subtitle">최근 스터디 그룹의 주요 소식</p>
-        
-        <div class="bg-blue-50 p-8 md:p-12 rounded-[32px] text-center max-w-4xl mx-auto border border-blue-100">
-            <span class="inline-block px-4 py-1.5 bg-blue-600 text-white text-sm font-bold rounded-full mb-6">이번 주 하이라이트</span>
-            <h3 class="text-2xl md:text-3xl font-bold text-blue-900 mb-6">"토익 900점 달성자 속출! 🎉"</h3>
-            <p class="text-slate-600 md:text-lg mb-8 leading-relaxed">
-                지난 주 그룹 1(어학) 멤버 3명이 목표했던 토익 점수를 달성했습니다.<br>
-                이번 주말에는 신촌 스터디룸에서 전체 모임 및 성과 공유회가 진행될 예정입니다.
-            </p>
-            <div class="flex justify-center -space-x-4">
-                <div class="w-12 h-12 rounded-full bg-blue-200 border-2 border-white flex justify-center items-center font-bold text-blue-700">A</div>
-                <div class="w-12 h-12 rounded-full bg-green-200 border-2 border-white flex justify-center items-center font-bold text-green-700">B</div>
-                <div class="w-12 h-12 rounded-full bg-yellow-200 border-2 border-white flex justify-center items-center font-bold text-yellow-700">C</div>
-            </div>
-        </div>
-    </section>
-
-    <!-- CTA Section -->
-    <section class="text-center py-24">
-        <h2 class="text-4xl font-black mb-8">나도 STEADY 시작하기 <span class="text-blue-600">→</span></h2>
-        <button onclick="openForm()" class="btn-primary !w-auto !inline-flex px-12 py-5 text-xl relative z-10 mx-auto">
-            지원서 작성하기 🚀
-        </button>
-    </section>
-
-    <!-- Footer -->
-    <footer class="bg-slate-50 py-12 text-center text-slate-500 border-t border-slate-200">
-        <div class="font-bold text-xl mb-4">STEADY</div>
-        <p class="text-sm">서울 대학생 연합 스터디 그룹<br>© 2026 STEADY. All rights reserved.</p>
-    </footer>
+    </div>
 
     <!-- Form Modal -->
-    <div id="form-modal">
+    <div id="form-modal" class="modal-overlay">
         <div class="main-container">
-            <div class="close-btn" onclick="closeForm()">
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+            <div class="close-btn !bg-slate-100 !text-slate-500 z-50 fixed md:absolute" style="top:20px; right:20px;" onclick="closeForm()">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
             </div>
             
             <form id="steady-form" onsubmit="submitForm(event)">
@@ -459,7 +257,7 @@
                     <p class="text-blue-500 font-bold mb-2">1 / 15</p>
                     <h2 class="text-2xl font-bold mb-4">이름을 알려주세요!</h2>
                     <input type="text" name="name" class="input-text" placeholder="홍길동" required>
-                    <div class="mt-8"><button type="button" class="btn-primary" onclick="nextQ(1)">다음으로 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg></button></div>
+                    <div class="mt-8"><button type="button" class="btn-primary" onclick="nextQ(1)">다음으로 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m9 18 6-6-6-6"/></svg></button></div>
                 </div>
 
                 <!-- Q2 -->
@@ -468,7 +266,7 @@
                     <p class="text-blue-500 font-bold mb-2">2 / 15</p>
                     <h2 class="text-2xl font-bold mb-4">나이를 알려주세요!</h2>
                     <input type="number" name="age" class="input-text" placeholder="23" required>
-                    <div class="mt-8"><button type="button" class="btn-primary" onclick="nextQ(2)">다음으로 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg></button></div>
+                    <div class="mt-8"><button type="button" class="btn-primary" onclick="nextQ(2)">다음으로 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m9 18 6-6-6-6"/></svg></button></div>
                 </div>
 
                 <!-- Q3 -->
@@ -478,7 +276,7 @@
                     <h2 class="text-2xl font-bold mb-1">학교 / 학과 / 학년을 알려주세요!</h2>
                     <p class="text-slate-500 text-sm mb-4">예) OO대학교 / 경영학과 / 2학년</p>
                     <input type="text" name="major" class="input-text" placeholder="입력해주세요" required>
-                    <div class="mt-8"><button type="button" class="btn-primary" onclick="nextQ(3)">다음으로 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg></button></div>
+                    <div class="mt-8"><button type="button" class="btn-primary" onclick="nextQ(3)">다음으로 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m9 18 6-6-6-6"/></svg></button></div>
                 </div>
 
                 <!-- Q4 -->
@@ -500,7 +298,7 @@
                     <h2 class="text-2xl font-bold mb-1">연락 가능한 전화번호를 남겨주세요.</h2>
                     <p class="text-slate-500 text-sm mb-4">합격 안내를 위해 사용됩니다.</p>
                     <input type="tel" name="phone" class="input-text" placeholder="010-1234-5678" required>
-                    <div class="mt-8"><button type="button" class="btn-primary" onclick="nextQ(5)">다음으로 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg></button></div>
+                    <div class="mt-8"><button type="button" class="btn-primary" onclick="nextQ(5)">다음으로 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m9 18 6-6-6-6"/></svg></button></div>
                 </div>
 
                 <!-- Q6 -->
@@ -523,7 +321,7 @@
                     <h2 class="text-2xl font-bold mb-1">이번 학기에 꾸준히 해보고 싶은 목표가 무엇인가요? 🎯</h2>
                     <p class="text-slate-500 text-sm mb-4">예) 토익 850점 / 컴활 1급 / 전공 성적 올리기 등</p>
                     <textarea name="goal" class="input-text" rows="4" placeholder="목표를 자유롭게 적어주세요!" required></textarea>
-                    <div class="mt-6"><button type="button" class="btn-primary" onclick="nextQ(7)">다음으로 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg></button></div>
+                    <div class="mt-6"><button type="button" class="btn-primary" onclick="nextQ(7)">다음으로 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m9 18 6-6-6-6"/></svg></button></div>
                 </div>
 
                 <!-- Q8 -->
@@ -533,7 +331,7 @@
                     <h2 class="text-2xl font-bold mb-1">구체적으로 어떤 스터디를 하고 싶은지 알려주세요! 📚</h2>
                     <p class="text-slate-500 text-sm mb-4">그룹 편성에 가장 중요하게 활용되는 질문입니다.</p>
                     <textarea name="studyDetail" class="input-text" rows="4" placeholder="희망하는 스터디 내용을 적어주세요." required></textarea>
-                    <div class="mt-6"><button type="button" class="btn-primary" onclick="nextQ(8)">다음으로 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg></button></div>
+                    <div class="mt-6"><button type="button" class="btn-primary" onclick="nextQ(8)">다음으로 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m9 18 6-6-6-6"/></svg></button></div>
                 </div>
 
                 <!-- Q9 -->
@@ -543,7 +341,7 @@
                     <h2 class="text-2xl font-bold mb-1">스테디에서 3개월 뒤 꼭 하나 이루고 싶은 게 있다면? ✨</h2>
                     <p class="text-slate-500 text-sm mb-4">크고 거창한 목표가 아니어도 좋아요!</p>
                     <textarea name="goal3Month" class="input-text" rows="3" placeholder="이루고 싶은 목표를 적어주세요." required></textarea>
-                    <div class="mt-6"><button type="button" class="btn-primary" onclick="nextQ(9)">다음으로 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg></button></div>
+                    <div class="mt-6"><button type="button" class="btn-primary" onclick="nextQ(9)">다음으로 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m9 18 6-6-6-6"/></svg></button></div>
                 </div>
 
                 <!-- Q10 -->
@@ -584,7 +382,7 @@
                         <label><input type="checkbox" name="time" value="주말 오후"><span class="option-label justify-center py-4 m-0">주말 오후</span></label>
                         <label><input type="checkbox" name="time" value="주말 저녁"><span class="option-label justify-center py-4 m-0">주말 저녁</span></label>
                     </div>
-                    <div class="mt-4"><button type="button" class="btn-primary" onclick="nextQ(12)">다음으로 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg></button></div>
+                    <div class="mt-4"><button type="button" class="btn-primary" onclick="nextQ(12)">다음으로 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m9 18 6-6-6-6"/></svg></button></div>
                 </div>
 
                 <!-- Q13 -->
@@ -594,7 +392,7 @@
                     <h2 class="text-2xl font-bold mb-1">주로 활동하기 편한 지역을 알려주세요. 📍</h2>
                     <p class="text-slate-500 text-sm mb-4">예) 신촌/홍대 / 강남 등</p>
                     <input type="text" name="region" class="input-text" placeholder="활동 가능 지역" required>
-                    <div class="mt-8"><button type="button" class="btn-primary" onclick="nextQ(13)">다음으로 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg></button></div>
+                    <div class="mt-8"><button type="button" class="btn-primary" onclick="nextQ(13)">다음으로 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m9 18 6-6-6-6"/></svg></button></div>
                 </div>
 
                 <!-- Q14 -->
@@ -603,7 +401,7 @@
                     <p class="text-blue-500 font-bold mb-2">14 / 15</p>
                     <h2 class="text-2xl font-bold mb-4">마지막으로 지원하게 된 이유를 편하게 적어주세요! 😊</h2>
                     <textarea name="reason" class="input-text" rows="5" placeholder="자유롭게 작성해주세요." required></textarea>
-                    <div class="mt-6"><button type="button" class="btn-primary" onclick="nextQ(14)">다음으로 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg></button></div>
+                    <div class="mt-6"><button type="button" class="btn-primary" onclick="nextQ(14)">다음으로 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m9 18 6-6-6-6"/></svg></button></div>
                 </div>
 
                 <!-- Q15 -->
@@ -632,13 +430,127 @@
     </div>
 
     <script>
-        // Modal logic
-        const modal = document.getElementById('form-modal');
+        // --- 1. Quotes Widget ---
+        const quotes = [
+            "어제보다 나은 오늘을 위해, STEADY!",
+            "꾸준함은 모든 것을 이깁니다.",
+            "작은 성취가 모여 큰 성공을 만듭니다.",
+            "시작이 반이다, 오늘 할 일을 내일로 미루지 말자.",
+            "우리가 반복해서 하는 행동이 바로 우리다. - 아리스토텔레스"
+        ];
+        document.getElementById('quote-text').innerText = quotes[Math.floor(Math.random() * quotes.length)];
+
+        // --- 2. Pomodoro Timer Widget ---
+        let timerInterval;
+        let timeLeft = 25 * 60;
+        let isRunning = false;
+
+        function updateTimerDisplay() {
+            const m = Math.floor(timeLeft / 60).toString().padStart(2, '0');
+            const s = (timeLeft % 60).toString().padStart(2, '0');
+            document.getElementById('timer-display').innerText = `${m}:${s}`;
+        }
+
+        function toggleTimer() {
+            const btn = document.getElementById('timer-btn');
+            if (isRunning) {
+                clearInterval(timerInterval);
+                btn.innerText = '계속';
+                btn.className = 'flex-1 bg-slate-800 hover:bg-slate-900 text-white font-bold py-3 rounded-xl transition';
+            } else {
+                timerInterval = setInterval(() => {
+                    if (timeLeft > 0) {
+                        timeLeft--;
+                        updateTimerDisplay();
+                    } else {
+                        clearInterval(timerInterval);
+                        alert('뽀모도로 종료! 5분간 휴식하세요 ☕');
+                        resetTimer();
+                    }
+                }, 1000);
+                btn.innerText = '일시정지';
+                btn.className = 'flex-1 bg-red-100 hover:bg-red-200 text-red-700 font-bold py-3 rounded-xl transition';
+            }
+            isRunning = !isRunning;
+        }
+
+        function resetTimer() {
+            clearInterval(timerInterval);
+            isRunning = false;
+            timeLeft = 25 * 60;
+            updateTimerDisplay();
+            const btn = document.getElementById('timer-btn');
+            btn.innerText = '집중 시작';
+            btn.className = 'flex-1 bg-slate-800 hover:bg-slate-900 text-white font-bold py-3 rounded-xl transition';
+        }
+
+        // --- 3. Todo List Widget ---
+        let todos = JSON.parse(localStorage.getItem('steady-todos')) || [
+            { text: "단어 50개 암기", done: false },
+            { text: "전공 복습하기", done: false }
+        ];
+
+        function renderTodos() {
+            const list = document.getElementById('todo-list');
+            list.innerHTML = '';
+            todos.forEach((todo, index) => {
+                list.innerHTML += `
+                    <li class="flex items-center gap-3 p-3 bg-slate-50 hover:bg-slate-100 rounded-xl transition border border-slate-100">
+                        <input type="checkbox" ${todo.done ? 'checked' : ''} onchange="toggleTodo(${index})" class="w-5 h-5 rounded border-slate-300 text-blue-600 accent-blue-600 cursor-pointer">
+                        <span class="flex-1 text-sm ${todo.done ? 'line-through text-slate-400' : 'text-slate-700 font-medium'}">${todo.text}</span>
+                        <button onclick="deleteTodo(${index})" class="text-slate-300 hover:text-red-500 transition px-2">✕</button>
+                    </li>
+                `;
+            });
+            localStorage.setItem('steady-todos', JSON.stringify(todos));
+        }
+
+        function addTodo(e) {
+            e.preventDefault();
+            const input = document.getElementById('todo-input');
+            if (input.value.trim()) {
+                todos.push({ text: input.value.trim(), done: false });
+                input.value = '';
+                renderTodos();
+            }
+        }
+
+        function toggleTodo(index) {
+            todos[index].done = !todos[index].done;
+            renderTodos();
+        }
+
+        function deleteTodo(index) {
+            todos.splice(index, 1);
+            renderTodos();
+        }
+
+        renderTodos();
+
+        // --- 4. Modals (Gallery & Form) ---
+        let swiperInstance = null;
+        
+        function openGallery() {
+            document.getElementById('gallery-modal').classList.add('show');
+            document.body.style.overflow = 'hidden';
+            if (!swiperInstance) {
+                swiperInstance = new Swiper('.gallery-swiper', {
+                    effect: 'cards',
+                    grabCursor: true,
+                    loop: true,
+                    pagination: { el: '.swiper-pagination', dynamicBullets: true }
+                });
+            }
+        }
+
+        function closeGallery() {
+            document.getElementById('gallery-modal').classList.remove('show');
+            document.body.style.overflow = 'auto';
+        }
+
         function openForm() {
-            modal.classList.add('show');
-            document.body.style.overflow = 'hidden'; 
-            
-            // Reset to Q1
+            document.getElementById('form-modal').classList.add('show');
+            document.body.style.overflow = 'hidden';
             document.querySelectorAll('.card').forEach(c => {
                 c.classList.remove('active');
                 c.classList.remove('exit-up');
@@ -647,15 +559,13 @@
         }
 
         function closeForm() {
-            modal.classList.remove('show');
+            document.getElementById('form-modal').classList.remove('show');
             document.body.style.overflow = 'auto';
         }
 
-        // Form navigation logic
+        // --- 5. Form Navigation ---
         function nextQ(currentNum) {
             const currentQ = document.getElementById(`q${currentNum}`);
-            
-            // Validation
             const inputs = currentQ.querySelectorAll('input, textarea');
             let isValid = true;
             for(let input of inputs) {
@@ -668,11 +578,9 @@
             if(!isValid) return;
 
             const nextQElem = document.getElementById(`q${currentNum + 1}`);
-            
             if (nextQElem) {
                 currentQ.classList.remove('active');
                 currentQ.classList.add('exit-up');
-                
                 setTimeout(() => {
                     nextQElem.classList.add('active');
                     const input = nextQElem.querySelector('input:not([type="radio"]):not([type="checkbox"]), textarea');
@@ -689,21 +597,15 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
-        import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-analytics.js";
-
+        
         const firebaseConfig = {
             apiKey: "AIzaSyCH1KkimKGN2NImlVHtmmXzO2p6OKkLznk",
             authDomain: "steady-54e01.firebaseapp.com",
-            projectId: "steady-54e01",
-            storageBucket: "steady-54e01.firebasestorage.app",
-            messagingSenderId: "290851972856",
-            appId: "1:290851972856:web:95e1080c57ef8219e77d0d",
-            measurementId: "G-06NTZQ6R8T"
+            projectId: "steady-54e01"
         };
 
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
-        const analytics = getAnalytics(app);
 
         window.submitForm = async function(e) {
             e.preventDefault();
@@ -716,22 +618,15 @@
             try {
                 const formData = new FormData(e.target);
                 const data = Object.fromEntries(formData.entries());
-                
                 const times = formData.getAll('time');
-                if (times.length > 0) {
-                    data.time = times;
-                }
-                
+                if (times.length > 0) data.time = times;
                 data.timestamp = new Date();
 
                 await addDoc(collection(db, "applications"), data);
 
                 confetti({
-                    particleCount: 200,
-                    spread: 100,
-                    origin: { y: 0.6 },
-                    colors: ['#0b57d0', '#facc15', '#ffffff'],
-                    zIndex: 9999
+                    particleCount: 200, spread: 100, origin: { y: 0.6 },
+                    colors: ['#0b57d0', '#facc15', '#ffffff'], zIndex: 9999
                 });
 
                 setTimeout(() => {
@@ -739,7 +634,6 @@
                     window.location.reload();
                 }, 2000);
             } catch (error) {
-                console.error("Error adding document: ", error);
                 alert('제출 중 오류가 발생했습니다. 다시 시도해주세요.');
                 submitBtn.innerHTML = originalBtnText;
                 submitBtn.disabled = false;
